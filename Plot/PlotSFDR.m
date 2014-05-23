@@ -1,20 +1,22 @@
-function sfdr = PlotSFDR(x, y1, y3, p, inRange1, inRange3, Nmeas)
+function [sfdr, strsfdr, IIP3, OIP3] = PlotSFDR(x, y1, y3, n, inRange1, inRange3)
 % PlotSFDR
 % To plot SFDR data and fit the SFDR curve, in given conditions
 %   X           x-axis, input power (dBm)
 %   Y1          first order harmonics response
-%   Y3          Third (maybe fifth) order IMD response
-%   p           Optical power, 
+%   Y3          Third (maybe fifth, senenth or so) order IMD response
+%   n           related to noise. If n <= -60, then it is regarded as
+%               measured noise floor (dBm/Hz), otherwise, it is regarded as
+%               optical power that entered the photo-diode, and the noise 
+%               will be calculated according to N (dbm)
 %   inRange1    fitting Y1 within this range for Y1
 %   inRange3    fitting Y3 within this range for Y3
-%   Nmeas       ??
 
 %
-%	Copyright (c) 2012, LONMP, Tsinghua University,
+%	Copyright (c) 2012 - 2014, LONMP, Tsinghua University,
 %	Written by Shangyuan Li,
 %
-%	Revision Note: Version Contron, and comments
-%	$Version: 1.0.0.1 $	$Date: 2012-05-29 14:31:43 $
+%	Revision Note: Change the argument definition and order
+%	$Version: 1.1.0.1 $	$Date: 2014-05-23 14:40:47 $
 
 clf;
 f = fittype({'x','1'},'coefficients',{'a','b'});
@@ -22,33 +24,37 @@ f = fittype({'x','1'},'coefficients',{'a','b'});
 if nargin == 5
     subRange1 = inRange1;
     subRange3 = inRange1;
-else
+elseif nargin == 6
     subRange1 = inRange1;
     subRange3 = inRange3;
+else
+    error('Please refer to usage of PlotSFDR!');
 end
 
-if nargin == 7
+if n <= -60 % regarded as measured noise floor (dBm/Hz) 
 	nth = Nmeas;
-else
-	nth = 10 * log10( 2*50*0.6*1.6e-19*10^(p/10)+1.6e-22+1.66e-17);
+else % regarded as optical power, will calculate theoratical noise floor
+	nth = 10 * log10( 2*50*0.6*1.6e-19*10^(n/10)+1.6e-22+1.66e-17);
 end
 
 %% Plot measured data
-hold off;
+% hold off;
 % plot(x, y1, x, y3);
 % hold on;
 hold on;
 
-%% Curve fitting
+%% Curve fitting of x, y1 and y3
 [c1,gof1] = fit(x(subRange1)', y1(subRange1)',f);   % 1st order
 [c2,gof2] = fit(x(subRange3)', y3(subRange3)',f);   % 3rd order
+
+%% Calculate SFDR, IIP3, OIP3
 
 sfdr = c1((nth - c2.b)/c2.a)-nth;
 nz1 = (nth - c1.b)/c1.a;
 nz2 = (nth - c2.b)/c2.a;
 
 IIP3 = (c2.b-c1.b)/(c1.a-c2.a);
-y2 = c2(IIP3);
+OIP3 = c2(IIP3);
 
 
 %% Plotting
@@ -97,4 +103,6 @@ legend('Fundemental', '3rd order intermoduation distortion',...
 hold off
 % hold on
 % legend('Location', 'NorthWest')
-fprintf('sfdr: %.3f, c1.a: %.3f, c1.b: %.3f, c2.a: %.3f, c2.b: %.3f\n', sfdr, c1.a, c1.b, c2.a, c2.b);
+
+strsfdr = sprintf('sfdr: %.3f, c1.a: %.3f, c1.b: %.3f, c2.a: %.3f, c2.b: %.3f, NF: %.3f', sfdr, c1.a, c1.b, c2.a, c2.b, Nmeas);
+fprintf('%s\n', strsfdr);
