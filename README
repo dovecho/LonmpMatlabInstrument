@@ -1,0 +1,11 @@
+This repository contains matlab programs for instrument control and measurement in LONMP, DEE, Tsinghua University.
+
+To control the intstruments is simple, easy and time-saving. This project began in early 2010, and maintained mainly by the principal author. 
+
+A lab often has one instrument of each type, which greatly simplified the structure of the program. All instrument handles are global variables, which means there's no need to write the handle whenever you call a function.
+
+An Agilent IO Library and Matlab with Instrument Control Toolbox are on the recipe.
+
+Hope more and more students could come and help building this repository.
+
+principal author: Shangyuan Li <dovecho@gmail.com>
