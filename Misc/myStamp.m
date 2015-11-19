@@ -12,11 +12,11 @@ function strStamp = myStamp(varargin)
 %   revSTR STRing that contains revising information
 %   VER Version in 'x.x.x.x' format
 %
-%	Copyright (c) 2012 - 2014, LONMP, Tsinghua University,
-%	Written by Shangyuan Li,
+%   Copyright (c) 2012 - 2015, LONMP, Tsinghua University,
+%   Written by Shangyuan Li,
 %
-%	Revision Note: Altered the return value to string, change the argument order
-%	$Version: 1.2.0.1 $	$Date: 2014-05-23 14:21:03 $
+%   Revision Note: Change print methof of YEAR due to MATLAB updates
+%   $Version: 1.3 $	$Date: 2015-11-19 22:00:55 $
 
 if nargin == 2
     revSTR = varargin{1};
@@ -39,12 +39,12 @@ end
 
 
 strStamp = sprintf('%%\n');
-strStamp = [strStamp sprintf('%%\tCopyright (c) 2012 - %d, LONMP, Tsinghua University,\n', year(now))];
-strStamp = [strStamp sprintf('%%\tWritten by %s,\n', strAuthorName)];
+strStamp = [strStamp sprintf('%%   Copyright (c) 2012 - %s, LONMP, Tsinghua University,\n', datestr(now, 'YYYY'))];
+strStamp = [strStamp sprintf('%%   Written by %s,\n', strAuthorName)];
 strStamp = [strStamp sprintf('%%\n')];
 
-strStamp = [strStamp sprintf('%%\tRevision Note: %s\n', revSTR)];
-strStamp = [strStamp sprintf('%%\t$Version: %s $\t', ver)];
+strStamp = [strStamp sprintf('%%   Revision Note: %s\n', revSTR)];
+strStamp = [strStamp sprintf('%%   $Version: %s $\t', ver)];
 strStamp = [strStamp sprintf('$Date: %s $\n', datestr(now, 'yyyy-mm-dd HH:MM:SS'))];
 strStamp = [strStamp sprintf('\n')];
 
